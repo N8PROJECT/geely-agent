@@ -18,7 +18,7 @@ export interface CarCardData {
   badgeBg?: string;
   badgeText?: string;
   imageUrl: string;
-  colors: { name: string; hex: string; imageUrl: string }[];
+  colors: { name: string; hex: any; colorSwatch?: any; imageUrl: string }[];
 }
 
 interface Props {
@@ -121,6 +121,7 @@ export default function CarCard({ car, index = 0 }: Props) {
           </p>
         </div>
 
+        {/* Color swatches */}
         {car.colors && car.colors.length > 0 && (
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold text-zinc-400">
@@ -128,12 +129,15 @@ export default function CarCard({ car, index = 0 }: Props) {
             </span>
             <div className="flex gap-1.5 flex-wrap">
               {car.colors.map((c, i) => {
-                const hexValue = c?.hex || "#CCCCCC";
-                // PERBAIKAN 2: Pengamanan cek warna agar tidak crash
+                // EKSTRAKSI AMAN: Ambil hex dari dalam objek Sanity jika ada
+                const rawHex = c?.colorSwatch?.hex || c?.hex?.hex || c?.hex;
+                const hexValue =
+                  typeof rawHex === "string" ? rawHex : "#CCCCCC";
+
                 const isLight =
                   hexValue === "#FFFFFF" ||
                   hexValue === "#F5F5F5" ||
-                  String(hexValue).toUpperCase().includes("F");
+                  hexValue.toUpperCase().includes("F");
                 return (
                   <span
                     key={i}

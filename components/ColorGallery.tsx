@@ -82,32 +82,32 @@ export default function ColorGallery({
       <div className="flex gap-2.5 overflow-x-auto pb-1">
         {colors.map((color, idx) => {
           const isSelected = idx === selectedIdx;
+
+          // EKSTRAKSI AMAN: Ambil hex dari dalam objek Sanity
+          const rawHex =
+            color?.colorSwatch?.hex || color?.hex?.hex || color?.hex;
+          const hexValue = typeof rawHex === "string" ? rawHex : "#CCCCCC";
+
+          const needsBorder = isLightColor(hexValue);
+
           return (
             <button
               key={idx}
               onClick={() => handleSelect(idx)}
-              aria-label={`Select color: ${color.name}`}
-              className={`relative flex-shrink-0 w-16 h-11 rounded-lg overflow-hidden transition-all duration-200 ${
+              title={color?.name}
+              aria-label={`Select color: ${color?.name}`}
+              className={`w-5 h-5 rounded-full flex-shrink-0 transition-all duration-200 ${
                 isSelected
-                  ? "ring-2 ring-cyan-500 ring-offset-2"
-                  : "ring-1 ring-zinc-200 hover:ring-zinc-400"
+                  ? "ring-2 ring-cyan-500 ring-offset-2 scale-110 ring-offset-[#09090b]" // ring-offset disesuaikan untuk dark mode
+                  : "hover:scale-110 hover:ring-1 hover:ring-zinc-400 hover:ring-offset-1 hover:ring-offset-[#09090b]"
               }`}
-            >
-              {color?.imageUrl && (
-                <Image
-                  src={color.imageUrl}
-                  alt={color.name || `Color ${idx}`}
-                  fill
-                  className="object-cover"
-                  sizes="64px"
-                />
-              )}
-              {isSelected && (
-                <div className="absolute inset-0 bg-cyan-500/15 flex items-center justify-center">
-                  <Check size={12} className="text-cyan-600 drop-shadow-md" />
-                </div>
-              )}
-            </button>
+              style={{
+                background: hexValue,
+                border: needsBorder
+                  ? "1.5px solid #52525b" // Border agak gelap agar terlihat di dark mode
+                  : "1.5px solid rgba(255,255,255,0.1)",
+              }}
+            />
           );
         })}
       </div>
