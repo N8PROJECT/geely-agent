@@ -1,10 +1,10 @@
-import { type SchemaTypeDefinition } from 'sanity'
+import { type SchemaTypeDefinition } from "sanity";
 
-import {blockContentType} from './blockContentType'
-import {categoryType} from './categoryType'
-import {postType} from './postType'
-import {authorType} from './authorType'
+// Import skema custom yang sudah kita buat
+import { carSchema } from "./car";
+import { newsSchema } from "./news";
 
+// Daftarkan ke dalam array types
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [blockContentType, categoryType, postType, authorType],
-}
+  types: [carSchema, newsSchema],
+};
