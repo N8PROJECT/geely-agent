@@ -27,12 +27,14 @@ export const allNewsQuery = groq`
   *[_type == "news"] | order(publishedAt desc) [0...3] {
     _id,
     title,
+    "slug": slug.current,
     excerpt,
     source,
     sourceUrl,
+    isInternalArticle,
     category,
     "date": publishedAt,
-    thumbnail,
+    "imageUrl": thumbnail.asset->url,
     featured
   }
 `;

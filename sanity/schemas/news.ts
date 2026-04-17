@@ -4,18 +4,24 @@ export const newsSchema = defineType({
   name: "news",
   title: "News Article",
   type: "document",
-  icon: () => "+",
+  icon: () => "📰", // Saya ganti sedikit agar ikonnya lebih relevan
 
   preview: {
     select: {
       title: "title",
       subtitle: "source",
       media: "thumbnail",
+      isInternal: "isInternalArticle", // Tarik status saklar
     },
-    prepare({ title, subtitle, media }) {
+    prepare({ title, subtitle, media, isInternal }) {
       return {
         title: title ?? "Untitled Article",
-        subtitle: subtitle ? `via ${subtitle}` : "",
+        // Menampilkan label yang berbeda di CMS tergantung sumbernya
+        subtitle: isInternal
+          ? `Internal Post`
+          : subtitle
+            ? `via ${subtitle}`
+            : "External Link",
         media,
       };
     },
@@ -29,6 +35,54 @@ export const newsSchema = defineType({
       description: "Full headline of the news article.",
       validation: (Rule) => Rule.required().min(10).max(200),
     }),
+
+    // --- TAMBAHAN SAKLAR KITA ---
+    defineField({
+      name: "isInternalArticle",
+      title: "Write Article Internally?",
+      type: "boolean",
+      description:
+        "ON: Tulis isi artikel langsung di sini. OFF: Cukup masukkan link menuju website berita aslinya.",
+      initialValue: false, // Default-nya eksternal
+    }),
+    // ---------------------------
+
+    // Kolom ini HANYA MUNCUL JIKA saklar MATI (External)
+    defineField({
+      name: "sourceUrl",
+      title: "Source URL (External Link)",
+      type: "url",
+      description: "Link to the original article on the publisher's website.",
+      hidden: ({ document }: any) => document?.isInternalArticle === true,
+      validation: (Rule) =>
+        Rule.custom((url, context) => {
+          if (!context.document?.isInternalArticle && !url) {
+            return "URL is required if this is not an internal article";
+          }
+          return true;
+        }),
+    }),
+
+    // Kolom ini HANYA MUNCUL JIKA saklar NYALA (Internal)
+    defineField({
+      name: "content",
+      title: "Article Content",
+      type: "array", // Array of Block = Rich Text di Sanity
+      description: "Tulis isi berita Anda di sini.",
+      of: [{ type: "block" }],
+      hidden: ({ document }: any) => !document?.isInternalArticle,
+      validation: (Rule) =>
+        Rule.custom((content, context) => {
+          if (
+            context.document?.isInternalArticle &&
+            (!content || content.length === 0)
+          ) {
+            return "Content is required for internal articles";
+          }
+          return true;
+        }),
+    }),
+
     defineField({
       name: "excerpt",
       title: "Excerpt / Summary",
@@ -37,23 +91,17 @@ export const newsSchema = defineType({
       description: "Short 1–2 sentence summary shown in the news feed card.",
       validation: (Rule) => Rule.required().min(20).max(400),
     }),
+
+    // Opsional jika internal, tapi wajib jika eksternal
     defineField({
       name: "source",
       title: "Source Name",
       type: "string",
-      description: 'Publisher name. E.g. "Oto.com", "GridOto", "AutoFun ID"',
+      description:
+        'Publisher name. E.g. "Oto.com", "GridOto" (Atau tulis "Geely Jakarta" jika internal)',
       validation: (Rule) => Rule.required().max(80),
     }),
-    defineField({
-      name: "sourceUrl",
-      title: "Source URL",
-      type: "url",
-      description: "Link to the original article on the publisher's website.",
-      validation: (Rule) =>
-        Rule.uri({ scheme: ["http", "https"] }).warning(
-          "It is recommended to provide a valid URL."
-        ),
-    }),
+
     defineField({
       name: "category",
       title: "Category",
@@ -97,7 +145,8 @@ export const newsSchema = defineType({
       name: "featured",
       title: "Featured?",
       type: "boolean",
-      description: "If true, this article appears as the hero card in the news feed.",
+      description:
+        "If true, this article appears as the hero card in the news feed.",
       initialValue: false,
     }),
   ],
