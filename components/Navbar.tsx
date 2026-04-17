@@ -7,9 +7,7 @@ import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
   { label: "Models", href: "#katalog" },
-  { label: "Promo", href: "#promo" },
   { label: "News", href: "#berita" },
-  { label: "Services", href: "#servis" },
 ];
 
 export default function Navbar() {
