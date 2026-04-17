@@ -46,23 +46,27 @@ export default function CarCard({ car, index = 0 }: Props) {
         delay: index * 0.1,
       }}
       whileHover={{ scale: 1.02 }}
-      className="bg-white rounded-2xl overflow-hidden border border-zinc-200 flex flex-col"
+      className="bg-white rounded-2xl overflow-hidden border border-zinc-200 flex flex-col h-full"
       style={{ willChange: "transform" }}
     >
-      {/* Image */}
-      <div className="relative h-52 overflow-hidden bg-zinc-100">
+      {/* ── PERBAIKAN DI SINI: Image Wrapper dengan aspect-[16/10] ── */}
+      <div className="relative w-full aspect-[16/10] overflow-hidden bg-zinc-100">
         <motion.div
-          className="absolute inset-0"
-          whileHover={{ scale: 1.07 }}
+          className="absolute inset-0 w-full h-full"
+          whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 120, damping: 18 }}
         >
-          <Image
-            src={car.imageUrl}
-            alt={car.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 33vw"
-          />
+          {car.imageUrl && (
+            <Image
+              src={car.imageUrl}
+              alt={car.name}
+              fill
+              // Gunakan object-cover agar gambar mengisi wadah tanpa merusak rasio aslinya.
+              // Jika ujung mobil terpotong, ganti "object-cover" menjadi "object-contain"
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 33vw"
+            />
+          )}
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
 
@@ -78,7 +82,7 @@ export default function CarCard({ car, index = 0 }: Props) {
           </span>
         )}
         <span className="absolute bottom-2.5 right-3 text-[10px] font-semibold text-white/80 tracking-[0.1em] z-10">
-          {car.type.toUpperCase()}
+          {car.type?.toUpperCase()}
         </span>
       </div>
 
@@ -88,7 +92,9 @@ export default function CarCard({ car, index = 0 }: Props) {
           <h3 className="text-[17px] font-black text-zinc-900 tracking-tight">
             {car.name}
           </h3>
-          <p className="text-[12px] text-zinc-400 italic mt-1">{car.tagline}</p>
+          <p className="text-[12px] text-zinc-400 italic mt-1 line-clamp-1">
+            {car.tagline}
+          </p>
         </div>
 
         {/* Specs */}
@@ -105,7 +111,7 @@ export default function CarCard({ car, index = 0 }: Props) {
                 {label}
               </p>
               <p className="text-[11px] font-bold text-zinc-700 mt-0.5">
-                {val}
+                {val || "-"}
               </p>
             </div>
           ))}
@@ -120,33 +126,39 @@ export default function CarCard({ car, index = 0 }: Props) {
         </div>
 
         {/* Color swatches */}
-        {car.colors.length > 0 && (
+        {car.colors && car.colors.length > 0 && (
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold text-zinc-400">
               Colors:
             </span>
-            <div className="flex gap-1.5">
-              {car.colors.map((c, i) => (
-                <span
-                  key={i}
-                  title={c.name}
-                  className="w-3.5 h-3.5 rounded-full flex-shrink-0"
-                  style={{
-                    background: c.hex,
-                    border:
-                      c.hex === "#F5F5F5" || c.hex === "#EFEFEF"
+            <div className="flex gap-1.5 flex-wrap">
+              {car.colors.map((c, i) => {
+                const hexValue = c?.hex || "#CCCCCC";
+                const isLight =
+                  hexValue === "#FFFFFF" ||
+                  hexValue === "#F5F5F5" ||
+                  hexValue.toUpperCase().includes("F");
+                return (
+                  <span
+                    key={i}
+                    title={c?.name || "Color"}
+                    className="w-3.5 h-3.5 rounded-full flex-shrink-0"
+                    style={{
+                      background: hexValue,
+                      border: isLight
                         ? "1.5px solid #d1d5db"
                         : "1.5px solid rgba(0,0,0,0.1)",
-                  }}
-                />
-              ))}
+                    }}
+                  />
+                );
+              })}
             </div>
           </div>
         )}
 
-        {/* CTAs */}
+        {/* CTAs - Push to bottom */}
         <div className="flex flex-col gap-2 mt-auto">
-          {/* Solid WA button with glow pulse */}
+          {/* Solid WA button */}
           <motion.a
             href={tdLink}
             target="_blank"
@@ -156,7 +168,6 @@ export default function CarCard({ car, index = 0 }: Props) {
             whileTap={{ scale: 0.97 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            {/* Glow layer */}
             <motion.span
               className="absolute inset-0 bg-cyan-400 rounded-full"
               initial={{ opacity: 0 }}
