@@ -49,7 +49,6 @@ export default function CarCard({ car, index = 0 }: Props) {
       className="bg-white rounded-2xl overflow-hidden border border-zinc-200 flex flex-col h-full"
       style={{ willChange: "transform" }}
     >
-      {/* ── PERBAIKAN DI SINI: Image Wrapper dengan aspect-[16/10] ── */}
       <div className="relative w-full aspect-[16/10] overflow-hidden bg-zinc-100">
         <motion.div
           className="absolute inset-0 w-full h-full"
@@ -59,10 +58,8 @@ export default function CarCard({ car, index = 0 }: Props) {
           {car.imageUrl && (
             <Image
               src={car.imageUrl}
-              alt={car.name}
+              alt={car.name || "Geely Car"}
               fill
-              // Gunakan object-cover agar gambar mengisi wadah tanpa merusak rasio aslinya.
-              // Jika ujung mobil terpotong, ganti "object-cover" menjadi "object-contain"
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 33vw"
             />
@@ -81,12 +78,13 @@ export default function CarCard({ car, index = 0 }: Props) {
             {car.badge}
           </span>
         )}
+
+        {/* PERBAIKAN 1: Pengamanan tipe mobil agar tidak crash jika kosong di CMS */}
         <span className="absolute bottom-2.5 right-3 text-[10px] font-semibold text-white/80 tracking-[0.1em] z-10">
-          {car.type?.toUpperCase()}
+          {car.type ? String(car.type).toUpperCase() : ""}
         </span>
       </div>
 
-      {/* Body */}
       <div className="p-5 flex flex-col flex-1 gap-4">
         <div>
           <h3 className="text-[17px] font-black text-zinc-900 tracking-tight">
@@ -97,7 +95,6 @@ export default function CarCard({ car, index = 0 }: Props) {
           </p>
         </div>
 
-        {/* Specs */}
         <div className="flex gap-2.5">
           {[
             { label: "Range", val: car.rangeKm },
@@ -117,15 +114,13 @@ export default function CarCard({ car, index = 0 }: Props) {
           ))}
         </div>
 
-        {/* Price */}
         <div>
           <p className="text-[10px] text-zinc-400 font-medium">Starting MSRP</p>
           <p className="text-[16px] font-black text-cyan-600 tracking-tight mt-0.5">
-            {car.priceDisplay}
+            {car.priceDisplay || "-"}
           </p>
         </div>
 
-        {/* Color swatches */}
         {car.colors && car.colors.length > 0 && (
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold text-zinc-400">
@@ -134,10 +129,11 @@ export default function CarCard({ car, index = 0 }: Props) {
             <div className="flex gap-1.5 flex-wrap">
               {car.colors.map((c, i) => {
                 const hexValue = c?.hex || "#CCCCCC";
+                // PERBAIKAN 2: Pengamanan cek warna agar tidak crash
                 const isLight =
                   hexValue === "#FFFFFF" ||
                   hexValue === "#F5F5F5" ||
-                  hexValue.toUpperCase().includes("F");
+                  String(hexValue).toUpperCase().includes("F");
                 return (
                   <span
                     key={i}
@@ -156,9 +152,7 @@ export default function CarCard({ car, index = 0 }: Props) {
           </div>
         )}
 
-        {/* CTAs - Push to bottom */}
         <div className="flex flex-col gap-2 mt-auto">
-          {/* Solid WA button */}
           <motion.a
             href={tdLink}
             target="_blank"
@@ -178,7 +172,6 @@ export default function CarCard({ car, index = 0 }: Props) {
             <span className="relative z-10">Book a Test Drive</span>
           </motion.a>
 
-          {/* Outline button */}
           <motion.a
             href={krLink}
             target="_blank"
@@ -192,13 +185,12 @@ export default function CarCard({ car, index = 0 }: Props) {
             Finance Calculator
           </motion.a>
 
-          {/* Detail link */}
           <motion.div
             whileHover={{ x: 3 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             <Link
-              href={`/cars/${car.slug}`}
+              href={car.slug ? `/cars/${car.slug}` : "#"}
               className="flex items-center justify-center gap-1.5 text-[12px] font-semibold text-zinc-400 hover:text-zinc-700 py-1.5 transition-colors"
             >
               View Details
