@@ -3,14 +3,14 @@
 import { useState, useCallback } from "react";
 import Image from "next/image";
 import { Check } from "lucide-react";
+// Jika CarColor di lib/data tidak cocok dengan struktur Sanity,
+// Anda bisa mengganti tipe ini menjadi 'any' sementara di prop jika ada error TS.
 import type { CarColor } from "@/lib/data";
 
 interface ColorGalleryProps {
-  colors: CarColor[];
+  colors: any[]; // Diubah ke any[] sementara agar fleksibel menerima data dari Sanity
   carName: string;
-  /** Called whenever the selected color changes — lets the parent page
-   *  build a WhatsApp message that includes the chosen color name.  */
-  onColorChange?: (color: CarColor) => void;
+  onColorChange?: (color: any) => void;
 }
 
 export default function ColorGallery({
@@ -20,6 +20,9 @@ export default function ColorGallery({
 }: ColorGalleryProps) {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [imgLoading, setImgLoading] = useState(false);
+
+  // Fallback aman jika colors kosong
+  if (!colors || colors.length === 0) return null;
 
   const selected = colors[selectedIdx];
 
@@ -33,14 +36,16 @@ export default function ColorGallery({
     [selectedIdx, colors, onColorChange],
   );
 
-  /* ── Determine whether a swatch hex is too light and needs a dark border ── */
+  /* ── Fungsi yang sudah diamankan dari error 'replace is not a function' ── */
   const isLightColor = (hex: string): boolean => {
+    // Pengamanan: Jika hex bukan string atau kosong, kembalikan false
+    if (!hex || typeof hex !== "string") return false;
+
     const h = hex.replace("#", "");
     if (h.length < 6) return true;
     const r = parseInt(h.slice(0, 2), 16);
     const g = parseInt(h.slice(2, 4), 16);
     const b = parseInt(h.slice(4, 6), 16);
-    // Relative luminance approximation
     return r * 0.299 + g * 0.587 + b * 0.114 > 186;
   };
 
@@ -48,28 +53,27 @@ export default function ColorGallery({
     <div className="flex flex-col gap-5">
       {/* ── Main image ── */}
       <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-100">
-        <Image
-          key={selected.imageUrl} /* forces re-mount on src change */
-          src={selected.imageUrl}
-          alt={`${carName} — ${selected.name}`}
-          fill
-          priority
-          className={`object-cover transition-opacity duration-400 ${
-            imgLoading ? "opacity-0" : "opacity-100"
-          }`}
-          sizes="(max-width: 768px) 100vw, 55vw"
-          onLoad={() => setImgLoading(false)}
-        />
-
+        {selected?.imageUrl && (
+          <Image
+            key={selected.imageUrl}
+            src={selected.imageUrl}
+            alt={`${carName} — ${selected.name}`}
+            fill
+            priority
+            className={`object-cover transition-opacity duration-400 ${
+              imgLoading ? "opacity-0" : "opacity-100"
+            }`}
+            sizes="(max-width: 768px) 100vw, 55vw"
+            onLoad={() => setImgLoading(false)}
+          />
+        )}
         {/* Loading shimmer */}
         {imgLoading && (
           <div className="absolute inset-0 animate-pulse bg-zinc-200 rounded-2xl" />
         )}
-
-        {/* Color name tag — bottom-left overlay */}
         <div className="absolute bottom-0 left-0 right-0 px-5 py-3.5 bg-gradient-to-t from-black/55 to-transparent rounded-b-2xl">
           <p className="text-[12px] font-bold text-white/90 tracking-wide">
-            {selected.name}
+            {selected?.name || "Unknown Color"}
           </p>
         </div>
       </div>
@@ -80,7 +84,7 @@ export default function ColorGallery({
           const isSelected = idx === selectedIdx;
           return (
             <button
-              key={color.name}
+              key={idx}
               onClick={() => handleSelect(idx)}
               aria-label={`Select color: ${color.name}`}
               className={`relative flex-shrink-0 w-16 h-11 rounded-lg overflow-hidden transition-all duration-200 ${
@@ -89,13 +93,15 @@ export default function ColorGallery({
                   : "ring-1 ring-zinc-200 hover:ring-zinc-400"
               }`}
             >
-              <Image
-                src={color.imageUrl}
-                alt={color.name}
-                fill
-                className="object-cover"
-                sizes="64px"
-              />
+              {color?.imageUrl && (
+                <Image
+                  src={color.imageUrl}
+                  alt={color.name || `Color ${idx}`}
+                  fill
+                  className="object-cover"
+                  sizes="64px"
+                />
+              )}
               {isSelected && (
                 <div className="absolute inset-0 bg-cyan-500/15 flex items-center justify-center">
                   <Check size={12} className="text-cyan-600 drop-shadow-md" />
@@ -114,10 +120,14 @@ export default function ColorGallery({
         <div className="flex gap-2">
           {colors.map((color, idx) => {
             const isSelected = idx === selectedIdx;
-            const needsBorder = isLightColor(color.hex);
+
+            // EKSTRAKSI HEX AMAN: Cek dari struktur Sanity colorSwatch, lalu fallback ke hex biasa, lalu abu-abu
+            const hexValue = color?.colorSwatch?.hex || color?.hex || "#CCCCCC";
+            const needsBorder = isLightColor(hexValue);
+
             return (
               <button
-                key={color.hex}
+                key={idx}
                 onClick={() => handleSelect(idx)}
                 title={color.name}
                 aria-label={`Select color: ${color.name}`}
@@ -127,7 +137,7 @@ export default function ColorGallery({
                     : "hover:scale-110 hover:ring-1 hover:ring-zinc-400 hover:ring-offset-1"
                 }`}
                 style={{
-                  background: color.hex,
+                  background: hexValue,
                   border: needsBorder
                     ? "1.5px solid #d1d5db"
                     : "1.5px solid rgba(0,0,0,0.08)",
@@ -137,7 +147,7 @@ export default function ColorGallery({
           })}
         </div>
         <span className="text-[12px] text-zinc-500 font-medium ml-1">
-          {selected.name}
+          {selected?.name}
         </span>
       </div>
     </div>
