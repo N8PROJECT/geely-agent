@@ -1,9 +1,9 @@
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
-import { sanityEnv } from "./sanity/env";
+import { projectId, dataset } from "./sanity/env";
 import { schema } from "./sanity/schema";
-import { colorInput } from '@sanity/color-input'
+import { colorInput } from "@sanity/color-input";
 
 /**
  * This config powers the Sanity Studio embedded at /studio in your Next.js app.
@@ -13,8 +13,8 @@ export default defineConfig({
   /* Must match the route defined in app/studio/[[...tool]]/page.tsx */
   basePath: "/studio",
 
-  projectId: sanityEnv.projectId,
-  dataset: sanityEnv.dataset,
+  projectId: projectId,
+  dataset: dataset,
 
   schema,
 
