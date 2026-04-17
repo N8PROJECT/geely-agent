@@ -5,100 +5,44 @@ import { MessageCircle } from "lucide-react";
 import { AGENT } from "@/lib/data";
 import { generateWhatsAppLink } from "@/lib/utils";
 
-const NAV_LINKS = [
-  { label: "Tipe Mobil", href: "#katalog" },
-  { label: "Promo", href: "#promo" },
-  { label: "Berita", href: "#berita" },
-  { label: "Servis", href: "#servis" },
-];
-
 export default function Navbar() {
   const consultLink = generateWhatsAppLink(
     AGENT.phone,
-    `Halo ${AGENT.name}, saya ingin konsultasi pembelian mobil Geely.`,
+    `Hi ${AGENT.name}, I would like to consult about purchasing a Geely car.`,
   );
 
   return (
-    <nav className="sticky top-0 z-40 bg-white border-b border-zinc-200">
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-        {/* Left: nav links */}
-        <div className="flex items-center gap-6">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="text-[13px] font-semibold text-zinc-500 hover:text-zinc-900 transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Center: Logo */}
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-zinc-200">
+      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        {/* Left: Clean Text Logo */}
         <Link
           href="/"
-          className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5"
+          className="flex flex-col items-start justify-center group"
         >
-          <div className="w-8 h-8 bg-zinc-900 rounded-lg flex items-center justify-center flex-shrink-0">
-            <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
-              <circle
-                cx="14"
-                cy="14"
-                r="12"
-                stroke="white"
-                strokeWidth="2"
-                fill="none"
-              />
-              <ellipse
-                cx="14"
-                cy="14"
-                rx="8"
-                ry="5.5"
-                stroke="white"
-                strokeWidth="1.5"
-                fill="none"
-              />
-              <line
-                x1="6"
-                y1="14"
-                x2="22"
-                y2="14"
-                stroke="white"
-                strokeWidth="1"
-              />
-              <line
-                x1="14"
-                y1="6"
-                x2="14"
-                y2="22"
-                stroke="white"
-                strokeWidth="1"
-              />
-            </svg>
+          {/* Typographic Logo using standard sans-serif but stylized */}
+          <div className="font-black text-[20px] md:text-[22px] text-zinc-900 tracking-[-0.05em] leading-none group-hover:text-cyan-600 transition-colors">
+            GEELY
           </div>
-          <div>
-            <div className="font-black text-[14px] text-zinc-900 tracking-tight leading-none">
-              GEELY
-            </div>
-            <div className="text-[9px] font-semibold text-zinc-400 tracking-[0.12em] mt-0.5">
-              JAKARTA
-            </div>
+          <div className="text-[9px] md:text-[10px] font-bold text-zinc-400 tracking-[0.2em] mt-[1px]">
+            JAKARTA
           </div>
         </Link>
 
-        {/* Right: agent + CTA */}
-        <div className="flex items-center gap-3">
-          <span className="text-[12px] text-zinc-400 font-medium hidden sm:block">
-            {AGENT.shortName}
+        {/* Right: Agent + Minimalist CTA */}
+        <div className="flex items-center gap-4">
+          <span className="text-[12px] text-zinc-500 font-medium hidden md:block">
+            Authorized Agent{" "}
+            <span className="text-zinc-900 font-bold">{AGENT.shortName}</span>
           </span>
           <a
             href={consultLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 bg-cyan-500 hover:bg-cyan-600 text-white text-[12px] font-bold px-4 py-2 rounded-full transition-colors"
+            className="flex items-center gap-2 bg-zinc-900 hover:bg-cyan-600 text-white text-[12px] md:text-[13px] font-bold px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg"
           >
-            <MessageCircle size={13} />
-            Hubungi Saya
+            <MessageCircle size={15} />
+            <span className="hidden sm:inline">Contact Sales</span>
+            <span className="inline sm:hidden">Contact</span>
           </a>
         </div>
       </div>
