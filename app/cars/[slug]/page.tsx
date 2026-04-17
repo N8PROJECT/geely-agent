@@ -17,7 +17,7 @@ import { AGENT, getWhatsAppLink } from "@/lib/config";
 import ColorGalleryWrapper from "./ColorGalleryWrapper";
 import DetailAnimations from "./DetailAnimations";
 
-export const revalidate = 60;
+export const revalidate = 10;
 
 export async function generateStaticParams() {
   const slugs: { slug: string }[] = await sanityClient.fetch(allSlugsQuery);

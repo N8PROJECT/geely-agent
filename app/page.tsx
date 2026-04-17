@@ -11,7 +11,7 @@ import UtilityBar from "@/components/UtilityBar";
 import Footer from "@/components/Footer";
 import FloatingWaButton from "@/components/FloatingWaButton";
 
-export const revalidate = 60; // ISR — revalidate every 60 seconds
+export const revalidate = 10;
 
 export default async function HomePage() {
   const [rawCars, rawNews] = await Promise.all([
