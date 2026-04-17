@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image"; // <-- Tambahkan import Image
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -17,17 +18,17 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-zinc-200">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Left: Clean Text Logo */}
-        <Link
-          href="/"
-          className="flex flex-col items-start justify-center group z-50"
-        >
-          <div className="font-black text-[20px] md:text-[22px] text-zinc-900 tracking-[-0.05em] leading-none group-hover:text-cyan-600 transition-colors">
-            GEELY
-          </div>
-          <div className="text-[9px] md:text-[10px] font-bold text-zinc-400 tracking-[0.2em] mt-[1px]">
-            JAKARTA
-          </div>
+        {/* Left: Image Logo */}
+        <Link href="/" className="flex items-center justify-center group z-50">
+          {/* Ubah src="/logo.png" sesuai dengan nama file gambar Anda di folder public */}
+          <Image
+            src="/logo.png"
+            alt="Geely Logo"
+            width={120}
+            height={32}
+            className="w-auto h-5 md:h-6 object-contain transition-transform duration-300 group-hover:scale-105"
+            priority
+          />
         </Link>
 
         {/* Desktop Menu */}
@@ -45,7 +46,7 @@ export default function Navbar() {
 
         {/* Mobile Hamburger Button */}
         <button
-          className="md:hidden p-2 -mr-2 z-50 text-zinc-900"
+          className="md:hidden p-2 -mr-2 z-50 text-zinc-900 transition-transform active:scale-95"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
