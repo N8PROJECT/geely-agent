@@ -19,7 +19,6 @@ export default function Hero({ cars }: HeroProps) {
         loop
         playsInline
         className="absolute inset-0 w-full h-full object-cover opacity-50"
-        poster="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=85"
       >
         {/* Ganti dengan video hosting kamu, contoh: Cloudinary, Bunny.net, atau /videos/hero.mp4 di folder /public */}
         <source src="/videos/hero.mp4" type="video/mp4" />
@@ -45,7 +44,7 @@ export default function Hero({ cars }: HeroProps) {
       </div>
 
       {/* Thumbnail strip */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 flex border-t border-white/10">
+      {/* <div className="absolute bottom-0 left-0 right-0 z-10 flex border-t border-white/10">
         {CARS.map((car, i) => (
           <Link
             key={car.id}
@@ -73,7 +72,7 @@ export default function Hero({ cars }: HeroProps) {
             </div>
           </Link>
         ))}
-      </div>
+      </div> */}
     </section>
   );
 }
