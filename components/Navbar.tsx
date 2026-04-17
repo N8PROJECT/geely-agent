@@ -6,8 +6,9 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
-  { label: "Models", href: "#katalog" },
-  { label: "News", href: "#berita" },
+  { label: "Models", href: "#cars" },
+  { label: "News", href: "#news" },
+  { label: "Services", href: "#services" },
 ];
 
 export default function Navbar() {

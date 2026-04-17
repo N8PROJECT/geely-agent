@@ -12,7 +12,10 @@ export default function UtilityBar() {
   );
 
   return (
-    <section className="bg-white border-t border-zinc-200 pt-16 pb-20">
+    <section
+      id="services"
+      className="bg-white border-t border-zinc-200 pt-16 pb-20"
+    >
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Card 1: Test Drive */}

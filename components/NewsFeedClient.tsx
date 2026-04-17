@@ -55,7 +55,7 @@ export default function NewsFeedClient({ articles }: { articles: Article[] }) {
   const readMoreRel = isInternal ? "" : "noopener noreferrer";
 
   return (
-    <section id="berita" className="bg-zinc-950">
+    <section id="news" className="bg-zinc-950">
       {/* Tab strip */}
       <div className="flex items-center overflow-x-auto border-b border-white/10 px-6 md:px-12 hide-scrollbar">
         {articles.map((item, i) => (

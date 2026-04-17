@@ -5,7 +5,7 @@ import CarCard, { CarCardData } from "./CarCard";
 
 export default function CarCatalogClient({ cars }: { cars: CarCardData[] }) {
   return (
-    <section id="katalog" className="bg-zinc-50 py-16 px-6">
+    <section id="cars" className="bg-zinc-50 py-16 px-6">
       <div className="max-w-6xl mx-auto">
         <motion.div
           className="text-center mb-10"
