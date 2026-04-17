@@ -1,25 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { MessageCircle } from "lucide-react";
-import { AGENT } from "@/lib/data";
-import { generateWhatsAppLink } from "@/lib/utils";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+
+const NAV_LINKS = [
+  { label: "Models", href: "#katalog" },
+  { label: "Promo", href: "#promo" },
+  { label: "News", href: "#berita" },
+  { label: "Services", href: "#servis" },
+];
 
 export default function Navbar() {
-  const consultLink = generateWhatsAppLink(
-    AGENT.phone,
-    `Hi ${AGENT.name}, I would like to consult about purchasing a Geely car.`,
-  );
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-zinc-200">
+    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-zinc-200">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Left: Clean Text Logo */}
         <Link
           href="/"
-          className="flex flex-col items-start justify-center group"
+          className="flex flex-col items-start justify-center group z-50"
         >
-          {/* Typographic Logo using standard sans-serif but stylized */}
           <div className="font-black text-[20px] md:text-[22px] text-zinc-900 tracking-[-0.05em] leading-none group-hover:text-cyan-600 transition-colors">
             GEELY
           </div>
@@ -28,22 +30,45 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Right: Agent + Minimalist CTA */}
-        <div className="flex items-center gap-4">
-          <span className="text-[12px] text-zinc-500 font-medium hidden md:block">
-            Authorized Agent{" "}
-            <span className="text-zinc-900 font-bold">{AGENT.shortName}</span>
-          </span>
-          <a
-            href={consultLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-zinc-900 hover:bg-cyan-600 text-white text-[12px] md:text-[13px] font-bold px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg"
-          >
-            <MessageCircle size={15} />
-            <span className="hidden sm:inline">Contact Sales</span>
-            <span className="inline sm:hidden">Contact</span>
-          </a>
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center gap-8">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className="text-[13px] font-bold text-zinc-500 hover:text-zinc-900 tracking-wide transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Mobile Hamburger Button */}
+        <button
+          className="md:hidden p-2 -mr-2 z-50 text-zinc-900"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle menu"
+        >
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        {/* Mobile Dropdown Menu */}
+        <div
+          className={`
+          absolute top-16 left-0 right-0 bg-white border-b border-zinc-200 p-6 flex flex-col gap-6 shadow-xl transition-all duration-300 md:hidden
+          ${isOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 -translate-y-4 invisible"}
+        `}
+        >
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              onClick={() => setIsOpen(false)}
+              className="text-[16px] font-black text-zinc-900 tracking-wide border-b border-zinc-100 pb-4"
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
       </div>
     </nav>
