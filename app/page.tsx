@@ -51,8 +51,8 @@ export default async function HomePage() {
       <Navbar />
       <Hero cars={cars} />
       {/* <FeaturedCars cars={cars} /> */}
-      <NewsFeedClient articles={news} />
       <CarCatalogClient cars={cars} />
+      <NewsFeedClient articles={news} />
       <UtilityBar />
       <Footer />
       <FloatingWaButton />
